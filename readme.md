@@ -9,3 +9,5 @@
 # 使用说明
 抽卡时同时点击页面里的开始抽卡，然后在下面点击抽卡结果，之后每一次抽卡都需要同时点击，然后再点击结果
 ![](res/p4.png)
+# 使用
+https://htmlpreview.github.io/?https://raw.githubusercontent.com/azuse/PrincessConnect-Gacha-Tool/master/index.html
