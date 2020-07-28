@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PrincessConnect Gacha Tool</title>
+  <!-- Compiled and minified CSS -->
+  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/css/materialize.min.css"> -->
+
+</head>
+
+<body>
+
+  <canvas id="canvas" width="1000" height="1000" style="background-color:#333">
+  </canvas>
+  <!-- <canvas id="canvas2" width="1000" height="1000" style="background-color:#333">
+  </canvas> -->
+  <div>
+    <a href="#!" onclick="startGacha()">开始抽卡</a>
+    <label for="">请在抽卡同时按下</label>
+  </div>
+  <div>
+    <label for="">时间间隔</label>
+    <input type="text" value="11" id="timeIntervalInput">
+    <a href="#!" class="btn" onclick="timeIntervalUpdate()">更新</a>
+  </div>
+  <div>
+    <label for="">抽卡结果</label>
+    <a href="#!" onclick="addGachaResult(0)">1~2金</a>
+    <a href="#!" onclick="addGachaResult(1)">3金</a>
+    <a href="#!" onclick="addGachaResult(2)">4金</a>
+    <a href="#!" onclick="addGachaResult(3)">5金</a>
+    <a href="#!" onclick="addGachaResult(4)">彩</a>
+  </div>
+  <div>
+    <label for="">距离上次抽卡：</label>
+    <label for="" id="timeToLastGacha"></label>
+  </div>
+  <div>
+    <label for="">距离下次抽卡：</label>
+    <label for="" id="timeToNextGacha"></label>
+  </div>
+
+  <div style="width: 2000px;overflow-x: scroll;">
+    <canvas id="canvas3" width="6000" height="500" style="background-color:white">
+  </div>
+  </canvas>
+
+  <!-- Compiled and minified JavaScript -->
+  <script src="jquery.min.js"></script>
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script> -->
+  <script>
+    var canvas = document.getElementById("canvas");
+    var ctx = canvas.getContext("2d");
+    var radius = canvas.height / 2;
+    ctx.translate(radius, radius);
+    radius = radius * 0.90
+    setInterval(drawClock, 50);
+    setInterval(drawClock2, 50);
+    // var canvas2 = document.getElementById("canvas2");
+    // var ctx2 = canvas2.getContext("2d");
+    // ctx2.translate(radius / 0.9, radius / 0.9);
+
+    var canvas3 = document.getElementById("canvas3")
+    var ctx3 = canvas3.getContext("2d");
+
+    // gacha timeInterval
+    timeInterval = 11
+    var gachaSign = Array()
+    var lastGacha = -1
+    var lastGachaUnixTime = -1
+    function startGacha() {
+      // record gacha sign
+      var now = new Date();
+      var second = now.getSeconds();
+      gachaSign = Array()
+      for (i = 1; i * timeInterval < 60; i++) {
+        gachaSign.push(second + i * timeInterval)
+      }
+      lastGacha = second
+      lastGachaUnixTime = Date.now() / 1000
+      setInterval(lastGachaTimeUpdate, 10)
+      drawClock()
+      drawClock2()
+    }
+
+    function timeIntervalUpdate() {
+      newInterval = $("#timeIntervalInput").val()
+      timeInterval = parseFloat(newInterval)
+      drawClock()
+      // drawClock2()
+    }
+
+    var gachaResult = Array()
+    var gachaResultSecond = Array()
+    var gachaResultUnixTime = Array()
+    var gachaTypes = [{ name: "1~2金", color: "gold", y: -1 }, { name: "3金", color: "gold", y: 0 }, { name: "4金", color: "gold", y: 0.5 }, { name: "5金", color: "gold", y: 1 }, { name: "彩", color: "colorful", y: 1 }]
+    function addGachaResult(type) {
+      gachaResult.push(gachaTypes[type])
+      gachaResultSecond.push(lastGacha)
+      gachaResultUnixTime.push(lastGachaUnixTime)
+    }
+
+
+    // update last gache time minus
+    function lastGachaTimeUpdate() {
+      if (lastGacha != -1) {
+        timeDelta = Date.now() / 1000 - lastGachaUnixTime
+        $("#timeToLastGacha")[0].innerHTML = timeDelta
+        last2now = Date.now() / 1000 - lastGachaUnixTime // last gacha to now
+        last2nearest = lastGachaUnixTime + last2now - (last2now % timeInterval) + timeInterval
+        $("#timeToNextGacha")[0].innerHTML = last2nearest - Date.now() / 1000
+      }
+    }
+
+    function drawClock() {
+      drawFace(ctx, radius);
+      drawNumbers(ctx, radius);
+      drawTime(ctx, radius);
+      drawGachaResult()
+      // drawGachaSign();
+    }
+
+    function drawClock2() {
+      drawFace(ctx2, radius)
+      drawNumbersCustom(ctx2, radius, timeInterval)
+    }
+
+    function drawFace(ctx, radius) {
+      var grad;
+      ctx.beginPath();
+      ctx.arc(0, 0, radius, 0, 2 * Math.PI);
+      ctx.fillStyle = 'white';
+      ctx.fill();
+
+      ctx.strokeStyle = "black";
+      ctx.lineWidth = radius * 0.1;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(0, 0, radius * 0.1, 0, 2 * Math.PI);
+      ctx.fillStyle = '#333';
+      ctx.fill();
+    }
+
+    function drawNumbers(ctx, radius) {
+      var ang;
+      var num;
+      ctx.font = radius * 0.15 + "px arial";
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "center";
+      for (num = 1; num < 13; num++) {
+        ang = num * Math.PI / 6;
+        ctx.rotate(ang);
+        ctx.translate(0, -radius * 0.85);
+        ctx.rotate(-ang);
+        ctx.fillText(num.toString(), 0, 0);
+        ctx.rotate(ang);
+        ctx.translate(0, radius * 0.85);
+        ctx.rotate(-ang);
+      }
+
+      for (num = 0; num < 60; num++) {
+        ang = num * Math.PI / 30;
+        ctx.rotate(ang);
+        ctx.translate(0, -(radius + 70) * 0.85);
+        ctx.rotate(-ang);
+        ctx.font = "20px verdana, sans-serif";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillText(num.toString(), 0, 0);
+        ctx.fillStyle = "#000000";
+        ctx.rotate(ang);
+        ctx.translate(0, (radius + 70) * 0.85);
+        ctx.rotate(-ang);
+      }
+    }
+
+    function drawNumbersCustom(ctx, radius, interval) {
+      var ang;
+      var num;
+      ctx.font = radius * 0.15 + "px arial";
+      ctx.textBaseline = "middle";
+      ctx.textAlign = "center";
+      for (num = 0; num < interval; num++) {
+        ang = num * 2 * Math.PI / interval;
+        ctx.rotate(ang);
+        ctx.translate(0, -radius * 0.85);
+        ctx.rotate(-ang);
+        ctx.fillText(num.toString(), 0, 0);
+        ctx.rotate(ang);
+        ctx.translate(0, radius * 0.85);
+        ctx.rotate(-ang);
+      }
+    }
+
+    function drawTime(ctx, radius) {
+      var now = new Date();
+      var hour = now.getHours();
+      var minute = now.getMinutes();
+      var second = now.getSeconds();
+      var millisecond = now.getMilliseconds();
+      //hour
+      hour = hour % 12;
+      hour = (hour * Math.PI / 6) +
+        (minute * Math.PI / (6 * 60)) +
+        (second * Math.PI / (360 * 60));
+      //drawHand(ctx, hour, radius*0.5, radius*0.07);
+      //minute
+      minute = (minute * Math.PI / 30) + (second * Math.PI / (30 * 60));
+      //drawHand(ctx, minute, radius*0.8, radius*0.07);
+      // second
+      second_ = ((second + millisecond / 1000) * Math.PI / 30);
+      drawHand(ctx, second_, radius * 0.9, radius * 0.02);
+
+
+
+      // draw history gacha sign or realtime gacha sign
+      if (gachaSign.length > 0) {
+        for (i in gachaSign) {
+          second_ = ((gachaSign[i]) * Math.PI / 30);
+          // drawHandColor(ctx, second_, radius * 0.9, radius * 0.01, "grey");
+        }
+
+        // calculate next signs based now time
+        last2now = Math.floor(Date.now() / 1000 - lastGachaUnixTime) // last gacha to now
+        last2nearest = Math.floor(lastGachaUnixTime) + last2now - (last2now % timeInterval) + timeInterval
+        second_ = ((last2nearest) % 60 * Math.PI / 30);
+        drawHandColor(ctx, second_, radius * 0.9, radius * 0.01, "gold");
+        drawHandName(ctx, second_, radius * 0.9, radius * 0.01, "gold", "下次抽卡");
+
+      }
+      else {
+
+        for (i = 1; i * timeInterval < 60; i++) {
+          second_ = ((second + timeInterval * i) * Math.PI / 30);
+          drawHandColor(ctx, second_, radius * 0.9, radius * 0.01, "grey");
+        }
+      }
+
+      // draw last gacha sign
+      if (lastGacha != -1) {
+        second_ = ((lastGacha) * Math.PI / 30);
+        drawHandColor(ctx, second_, radius * 0.9, radius * 0.01, "pink");
+        drawHandName(ctx, second_, radius * 0.9, radius * 0.01, "pink", "上次抽卡");
+      }
+
+    }
+
+    function drawHand(ctx, pos, length, width) {
+      ctx.beginPath();
+      ctx.lineWidth = width;
+      ctx.lineCap = "round";
+      ctx.moveTo(0, 0);
+      ctx.rotate(pos);
+      ctx.strokeStyle = "red";
+      ctx.lineTo(0, -length);
+      ctx.stroke();
+      ctx.rotate(-pos);
+    }
+
+    function drawHandColor(ctx, pos, length, width, color) {
+      ctx.beginPath();
+      ctx.lineWidth = width;
+      ctx.lineCap = "round";
+      ctx.moveTo(0, 0);
+      ctx.rotate(pos);
+      ctx.strokeStyle = color;
+      ctx.lineTo(0, -length);
+      ctx.stroke();
+      ctx.rotate(-pos);
+    }
+
+    function drawHandName(ctx, pos, length, width, color, name) {
+      pos += Math.PI / 2
+      ctx.moveTo(0, 0);
+      ctx.rotate(pos);
+      ctx.font = "14px verdana, sans-serif";
+      ctx.fillStyle = color;
+      ctx.fillText(name, -length / 2, width * 4);
+      ctx.fillStyle = "#000000";
+      ctx.rotate(-pos);
+    }
+
+    function drawGachaResult() {
+      if (gachaResult.length == 0) return;
+
+      for (i in gachaResult) {
+        angle = gachaResultSecond[i]
+        ang = angle * Math.PI / 30;
+        ctx.rotate(ang);
+        ctx.translate(0, -(radius + 120) * 0.85);
+        ctx.rotate(-ang);
+        ctx.font = "24px verdana, sans-serif";
+        if (gachaResult[i].color == "gold") {
+          ctx.fillStyle = "gold";
+        }
+        else if (gachaResult[i].color == "colorful") {
+          gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 0); // x y r1 x y r0
+          gradient.addColorStop(0, 'green');
+          gradient.addColorStop(0.3, 'yellow');
+          gradient.addColorStop(0.6, 'red');
+          gradient.addColorStop(1, 'purple');
+          ctx.fillStyle = "red";
+        }
+        ctx.fillText(gachaResult[i].name, 0, 0);
+        ctx.fillStyle = "#000000";
+        ctx.rotate(ang);
+        ctx.translate(0, (radius + 120) * 0.85);
+        ctx.rotate(-ang);
+      }
+    }
+
+
+    ///////////////////////////////////////////////////////
+    ///  DRAW SIN & COS
+    ///////////////////////////////////////////////////////
+    setInterval(drawGraph, 10)
+    var gap = 20;
+    var startUnixTime = -1
+    function drawGraph() {
+
+      function drawGrid() {
+        ctx3.beginPath();
+        ctx3.lineWidth = 1;
+        /////////// Grid ///////
+        for (var ver = 0; ver <= canvas3.width; ver += gap) {
+          ctx3.moveTo(ver, 0)
+          ctx3.lineTo(ver, canvas3.height);
+        }
+        // for (var ver = 0; ver <= canvas3.height; ver += gap) {
+        //   ctx3.moveTo(0, ver)
+        //   ctx3.lineTo(canvas3.width, ver);
+        // }
+        ctx3.strokeStyle = '#e3f2fd';
+        ctx3.stroke();
+      }
+      drawGrid()
+      ////////// Grid end ////////
+
+      /////// Axis //////
+      function drawAxis() {
+        ctx3.beginPath();
+        ctx3.lineWidth = 1;
+        // ctx3.shadowColor = '#ffffff';
+        ctx3.strokeStyle = "#004ba0"
+        // ctx3.strokeStyle = '#0060c0';
+        ctx3.moveTo(0, canvas3.height / 2);
+        ctx3.lineTo(canvas3.width, canvas3.height / 2); // X Axis
+        ctx3.moveTo(0, 2);
+        ctx3.lineTo(0, canvas3.height);  //  Y Axis
+        ctx3.stroke();
+      }
+      drawAxis()
+      ////////Axis end///
+
+      function drawFN() {
+        ctx3.beginPath();
+        for (var angle = 0; angle < canvas3.width - 5; angle += 5) {
+          var y = canvas3.height / 2 - 140 * (Math.sin((Math.PI / 180) * angle))
+          var x = 10 + angle;
+          ctx3.lineTo(x, y);
+        }
+        ctx3.strokeStyle = '#f00000';
+        ctx3.stroke();
+      }
+
+
+      function drawTimeline() {
+        if (lastGachaUnixTime == -1) return
+        if (startUnixTime == -1) startUnixTime = lastGachaUnixTime
+        ctx3.beginPath()
+        time = Math.floor(Date.now() / 1000 - startUnixTime)
+        ctx3.moveTo(time * gap, 0)
+        ctx3.lineTo(time * gap, canvas3.height)
+        ctx3.strokeStyle = "#9b0000"
+        ctx3.stroke()
+      }
+      drawTimeline()
+
+      function drawNextGacha() {
+        if (lastGachaUnixTime == -1) return
+        ctx3.beginPath()
+        last2now = Math.floor(Date.now() / 1000 - lastGachaUnixTime) // last gacha to now
+        last2nearest = Math.floor(lastGachaUnixTime) + last2now - (last2now % timeInterval) + timeInterval
+        ctx3.moveTo((last2nearest - Math.floor(startUnixTime)) * gap, 0)
+        ctx3.lineTo((last2nearest - Math.floor(startUnixTime)) * gap, canvas3.height)
+        ctx3.strokeStyle = "#ffca28"
+        ctx3.stroke()
+      }
+      drawNextGacha()
+
+      function drawGachaResultXY() {
+        for (i in gachaResult) {
+          y = canvas3.height / 2 - canvas3.height * 0.6 * gachaResult[i].y /2
+          x = Math.floor(gachaResultUnixTime[i] - startUnixTime) * gap
+          ctx3.beginPath()
+          // ctx3.translate(x,canvas3.height * y)
+          ctx3.font = "24px verdana, sans-serif";
+          if (gachaResult[i].color == "gold") {
+            ctx3.fillStyle = "gold";
+          }
+          else if (gachaResult[i].color == "colorful") {
+            gradient = ctx3.createRadialGradient(0, 0, 0, 0, 0, 0); // x y r1 x y r0
+            gradient.addColorStop(0, 'green');
+            gradient.addColorStop(0.3, 'yellow');
+            gradient.addColorStop(0.6, 'red');
+            gradient.addColorStop(1, 'purple');
+            ctx3.fillStyle = "red";
+          }
+          ctx3.fillText(gachaResult[i].name, x + 10, y + 10);
+          ctx3.fillRect(x - 5, y - 5,10,10);
+          ctx3.fillStyle = "#000000";
+          // ctx3.translate(-x, -y)
+
+        }
+      }
+      drawGachaResultXY()
+
+    }
+
+
+
+  </script>
+
+</body>
+
+</html>
