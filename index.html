@@ -64,7 +64,7 @@
     var radius = canvas.height / 2
     ctx.translate(radius, radius)
     radius = radius * 0.90
-    REFRESH_RATE = 50
+    REFRESH_RATE = 10
     setInterval(drawClock, REFRESH_RATE)
     setInterval(drawClock2, REFRESH_RATE)
     // var canvas2 = document.getElementById("canvas2")
@@ -326,6 +326,11 @@
     setInterval(drawGraph, REFRESH_RATE)
     var gap = 20
     var startUnixTime = -1
+    var last_gacha_result_points_length = 0
+    best_fitness = -100000000
+    best_period = null
+    best_x_bias = null
+
     function drawGraph() {
 
       function drawGrid() {
@@ -478,19 +483,30 @@
         }
       }
 
+
+      // second_fitness = -100000000
+      // second_period = null
+      // second_x_bias = null
+      // fitness_map = {}
+
+      // 跳过计算
+      if (last_gacha_result_points_length == gacha_result_points.length) {
+        drawSin(best_period, best_x_bias)
+        return
+      }
+      else last_gacha_result_points_length = gacha_result_points.length
+
+      // 重置fitness
       best_fitness = -100000000
       best_period = null
       best_x_bias = null
 
-      second_fitness = -100000000
-      second_period = null
-      second_x_bias = null
-      fitness_map = {}
+      // 计算正弦拟合
       for (period = 4; period < 35; period += 0.5){
         for (x_bias = -180; x_bias < 180; x_bias += 10) {
           fitness = calSin(period, x_bias)
           // console.log(period, x_bias, fitness)
-          fitness_map[String(period)+','+String(x_bias)] = fitness
+          // fitness_map[String(period)+','+String(x_bias)] = fitness
 
           if (fitness > best_fitness) {
             best_fitness = fitness
