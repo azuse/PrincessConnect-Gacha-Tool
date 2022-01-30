@@ -17,7 +17,7 @@
   <!-- <canvas id="canvas2" width="1000" height="1000" style="background-color:#333">
   </canvas> -->
   <div>
-    <a href="#!" onclick="startGacha()">开始抽卡</a>
+    <a href="#!" onclick="startGacha()" style="font-size:120px">开始抽卡</a>
     <label for="">请在抽卡同时按下</label>
   </div>
   <div>
@@ -42,28 +42,37 @@
     <label for="" id="timeToNextGacha"></label>
   </div>
 
-  <div style="width: 2000px;overflow-x: scroll;">
-    <canvas id="canvas3" width="6000" height="500" style="background-color:white">
+  <div style="width: 3500px;overflow-x: scroll;">
+    <canvas id="canvas3" width="6000" height="500" style="background-color:white"></canvas>
   </div>
-  </canvas>
+  
+  <div>
+    <label for="">周期1：(8~16)</label>
+    <label for="" id="period1"></label>
+  </div>
+  <div>
+    <label for="">周期2：(16~32)</label>
+    <label for="" id="period2"></label>
+  </div>
 
   <!-- Compiled and minified JavaScript -->
   <script src="jquery.min.js"></script>
   <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.97.8/js/materialize.min.js"></script> -->
   <script>
-    var canvas = document.getElementById("canvas");
-    var ctx = canvas.getContext("2d");
-    var radius = canvas.height / 2;
-    ctx.translate(radius, radius);
+    var canvas = document.getElementById("canvas")
+    var ctx = canvas.getContext("2d")
+    var radius = canvas.height / 2
+    ctx.translate(radius, radius)
     radius = radius * 0.90
-    setInterval(drawClock, 50);
-    setInterval(drawClock2, 50);
-    // var canvas2 = document.getElementById("canvas2");
-    // var ctx2 = canvas2.getContext("2d");
-    // ctx2.translate(radius / 0.9, radius / 0.9);
+    REFRESH_RATE = 50
+    setInterval(drawClock, REFRESH_RATE)
+    setInterval(drawClock2, REFRESH_RATE)
+    // var canvas2 = document.getElementById("canvas2")
+    // var ctx2 = canvas2.getContext("2d")
+    // ctx2.translate(radius / 0.9, radius / 0.9)
 
     var canvas3 = document.getElementById("canvas3")
-    var ctx3 = canvas3.getContext("2d");
+    var ctx3 = canvas3.getContext("2d")
 
     // gacha timeInterval
     timeInterval = 11
@@ -72,15 +81,15 @@
     var lastGachaUnixTime = -1
     function startGacha() {
       // record gacha sign
-      var now = new Date();
-      var second = now.getSeconds();
+      var now = new Date()
+      var second = now.getSeconds()
       gachaSign = Array()
       for (i = 1; i * timeInterval < 60; i++) {
         gachaSign.push(second + i * timeInterval)
       }
       lastGacha = second
       lastGachaUnixTime = Date.now() / 1000
-      setInterval(lastGachaTimeUpdate, 10)
+      setInterval(lastGachaTimeUpdate, REFRESH_RATE)
       drawClock()
       drawClock2()
     }
@@ -115,198 +124,198 @@
     }
 
     function drawClock() {
-      drawFace(ctx, radius);
-      drawNumbers(ctx, radius);
-      drawTime(ctx, radius);
+      drawFace(ctx, radius)
+      drawNumbers(ctx, radius)
+      drawTime(ctx, radius)
       drawGachaResult()
-      // drawGachaSign();
+      // drawGachaSign()
     }
 
     function drawClock2() {
-      drawFace(ctx2, radius)
-      drawNumbersCustom(ctx2, radius, timeInterval)
+      // drawFace(ctx2, radius)
+      // drawNumbersCustom(ctx2, radius, timeInterval)
     }
 
     function drawFace(ctx, radius) {
-      var grad;
-      ctx.beginPath();
-      ctx.arc(0, 0, radius, 0, 2 * Math.PI);
-      ctx.fillStyle = 'white';
-      ctx.fill();
+      var grad
+      ctx.beginPath()
+      ctx.arc(0, 0, radius, 0, 2 * Math.PI)
+      ctx.fillStyle = 'white'
+      ctx.fill()
 
-      ctx.strokeStyle = "black";
-      ctx.lineWidth = radius * 0.1;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(0, 0, radius * 0.1, 0, 2 * Math.PI);
-      ctx.fillStyle = '#333';
-      ctx.fill();
+      ctx.strokeStyle = "black"
+      ctx.lineWidth = radius * 0.1
+      ctx.stroke()
+      ctx.beginPath()
+      ctx.arc(0, 0, radius * 0.1, 0, 2 * Math.PI)
+      ctx.fillStyle = '#333'
+      ctx.fill()
     }
 
     function drawNumbers(ctx, radius) {
-      var ang;
-      var num;
-      ctx.font = radius * 0.15 + "px arial";
-      ctx.textBaseline = "middle";
-      ctx.textAlign = "center";
+      var ang
+      var num
+      ctx.font = radius * 0.15 + "px arial"
+      ctx.textBaseline = "middle"
+      ctx.textAlign = "center"
       for (num = 1; num < 13; num++) {
-        ang = num * Math.PI / 6;
-        ctx.rotate(ang);
-        ctx.translate(0, -radius * 0.85);
-        ctx.rotate(-ang);
-        ctx.fillText(num.toString(), 0, 0);
-        ctx.rotate(ang);
-        ctx.translate(0, radius * 0.85);
-        ctx.rotate(-ang);
+        ang = num * Math.PI / 6
+        ctx.rotate(ang)
+        ctx.translate(0, -radius * 0.85)
+        ctx.rotate(-ang)
+        ctx.fillText(num.toString(), 0, 0)
+        ctx.rotate(ang)
+        ctx.translate(0, radius * 0.85)
+        ctx.rotate(-ang)
       }
 
       for (num = 0; num < 60; num++) {
-        ang = num * Math.PI / 30;
-        ctx.rotate(ang);
-        ctx.translate(0, -(radius + 70) * 0.85);
-        ctx.rotate(-ang);
-        ctx.font = "20px verdana, sans-serif";
-        ctx.fillStyle = "#ffffff";
-        ctx.fillText(num.toString(), 0, 0);
-        ctx.fillStyle = "#000000";
-        ctx.rotate(ang);
-        ctx.translate(0, (radius + 70) * 0.85);
-        ctx.rotate(-ang);
+        ang = num * Math.PI / 30
+        ctx.rotate(ang)
+        ctx.translate(0, -(radius + 70) * 0.85)
+        ctx.rotate(-ang)
+        ctx.font = "20px verdana, sans-serif"
+        ctx.fillStyle = "#ffffff"
+        ctx.fillText(num.toString(), 0, 0)
+        ctx.fillStyle = "#000000"
+        ctx.rotate(ang)
+        ctx.translate(0, (radius + 70) * 0.85)
+        ctx.rotate(-ang)
       }
     }
 
     function drawNumbersCustom(ctx, radius, interval) {
-      var ang;
-      var num;
-      ctx.font = radius * 0.15 + "px arial";
-      ctx.textBaseline = "middle";
-      ctx.textAlign = "center";
+      var ang
+      var num
+      ctx.font = radius * 0.15 + "px arial"
+      ctx.textBaseline = "middle"
+      ctx.textAlign = "center"
       for (num = 0; num < interval; num++) {
-        ang = num * 2 * Math.PI / interval;
-        ctx.rotate(ang);
-        ctx.translate(0, -radius * 0.85);
-        ctx.rotate(-ang);
-        ctx.fillText(num.toString(), 0, 0);
-        ctx.rotate(ang);
-        ctx.translate(0, radius * 0.85);
-        ctx.rotate(-ang);
+        ang = num * 2 * Math.PI / interval
+        ctx.rotate(ang)
+        ctx.translate(0, -radius * 0.85)
+        ctx.rotate(-ang)
+        ctx.fillText(num.toString(), 0, 0)
+        ctx.rotate(ang)
+        ctx.translate(0, radius * 0.85)
+        ctx.rotate(-ang)
       }
     }
 
     function drawTime(ctx, radius) {
-      var now = new Date();
-      var hour = now.getHours();
-      var minute = now.getMinutes();
-      var second = now.getSeconds();
-      var millisecond = now.getMilliseconds();
+      var now = new Date()
+      var hour = now.getHours()
+      var minute = now.getMinutes()
+      var second = now.getSeconds()
+      var millisecond = now.getMilliseconds()
       //hour
-      hour = hour % 12;
+      hour = hour % 12
       hour = (hour * Math.PI / 6) +
         (minute * Math.PI / (6 * 60)) +
-        (second * Math.PI / (360 * 60));
-      //drawHand(ctx, hour, radius*0.5, radius*0.07);
+        (second * Math.PI / (360 * 60))
+      //drawHand(ctx, hour, radius*0.5, radius*0.07)
       //minute
-      minute = (minute * Math.PI / 30) + (second * Math.PI / (30 * 60));
-      //drawHand(ctx, minute, radius*0.8, radius*0.07);
+      minute = (minute * Math.PI / 30) + (second * Math.PI / (30 * 60))
+      //drawHand(ctx, minute, radius*0.8, radius*0.07)
       // second
-      second_ = ((second + millisecond / 1000) * Math.PI / 30);
-      drawHand(ctx, second_, radius * 0.9, radius * 0.02);
+      second_ = ((second + millisecond / 1000) * Math.PI / 30)
+      drawHand(ctx, second_, radius * 0.9, radius * 0.02)
 
 
 
       // draw history gacha sign or realtime gacha sign
       if (gachaSign.length > 0) {
         for (i in gachaSign) {
-          second_ = ((gachaSign[i]) * Math.PI / 30);
-          // drawHandColor(ctx, second_, radius * 0.9, radius * 0.01, "grey");
+          second_ = ((gachaSign[i]) * Math.PI / 30)
+          // drawHandColor(ctx, second_, radius * 0.9, radius * 0.01, "grey")
         }
 
         // calculate next signs based now time
         last2now = Math.floor(Date.now() / 1000 - lastGachaUnixTime) // last gacha to now
         last2nearest = Math.floor(lastGachaUnixTime) + last2now - (last2now % timeInterval) + timeInterval
-        second_ = ((last2nearest) % 60 * Math.PI / 30);
-        drawHandColor(ctx, second_, radius * 0.9, radius * 0.01, "gold");
-        drawHandName(ctx, second_, radius * 0.9, radius * 0.01, "gold", "下次抽卡");
+        second_ = ((last2nearest) % 60 * Math.PI / 30)
+        drawHandColor(ctx, second_, radius * 0.9, radius * 0.01, "gold")
+        drawHandName(ctx, second_, radius * 0.9, radius * 0.01, "gold", "下次抽卡")
 
       }
       else {
 
         for (i = 1; i * timeInterval < 60; i++) {
-          second_ = ((second + timeInterval * i) * Math.PI / 30);
-          drawHandColor(ctx, second_, radius * 0.9, radius * 0.01, "grey");
+          second_ = ((second + timeInterval * i) * Math.PI / 30)
+          drawHandColor(ctx, second_, radius * 0.9, radius * 0.01, "grey")
         }
       }
 
       // draw last gacha sign
       if (lastGacha != -1) {
-        second_ = ((lastGacha) * Math.PI / 30);
-        drawHandColor(ctx, second_, radius * 0.9, radius * 0.01, "pink");
-        drawHandName(ctx, second_, radius * 0.9, radius * 0.01, "pink", "上次抽卡");
+        second_ = ((lastGacha) * Math.PI / 30)
+        drawHandColor(ctx, second_, radius * 0.9, radius * 0.01, "pink")
+        drawHandName(ctx, second_, radius * 0.9, radius * 0.01, "pink", "上次抽卡")
       }
 
     }
 
     function drawHand(ctx, pos, length, width) {
-      ctx.beginPath();
-      ctx.lineWidth = width;
-      ctx.lineCap = "round";
-      ctx.moveTo(0, 0);
-      ctx.rotate(pos);
-      ctx.strokeStyle = "red";
-      ctx.lineTo(0, -length);
-      ctx.stroke();
-      ctx.rotate(-pos);
+      ctx.beginPath()
+      ctx.lineWidth = width
+      ctx.lineCap = "round"
+      ctx.moveTo(0, 0)
+      ctx.rotate(pos)
+      ctx.strokeStyle = "red"
+      ctx.lineTo(0, -length)
+      ctx.stroke()
+      ctx.rotate(-pos)
     }
 
     function drawHandColor(ctx, pos, length, width, color) {
-      ctx.beginPath();
-      ctx.lineWidth = width;
-      ctx.lineCap = "round";
-      ctx.moveTo(0, 0);
-      ctx.rotate(pos);
-      ctx.strokeStyle = color;
-      ctx.lineTo(0, -length);
-      ctx.stroke();
-      ctx.rotate(-pos);
+      ctx.beginPath()
+      ctx.lineWidth = width
+      ctx.lineCap = "round"
+      ctx.moveTo(0, 0)
+      ctx.rotate(pos)
+      ctx.strokeStyle = color
+      ctx.lineTo(0, -length)
+      ctx.stroke()
+      ctx.rotate(-pos)
     }
 
     function drawHandName(ctx, pos, length, width, color, name) {
       pos += Math.PI / 2
-      ctx.moveTo(0, 0);
-      ctx.rotate(pos);
-      ctx.font = "14px verdana, sans-serif";
-      ctx.fillStyle = color;
-      ctx.fillText(name, -length / 2, width * 4);
-      ctx.fillStyle = "#000000";
-      ctx.rotate(-pos);
+      ctx.moveTo(0, 0)
+      ctx.rotate(pos)
+      ctx.font = "14px verdana, sans-serif"
+      ctx.fillStyle = color
+      ctx.fillText(name, -length / 2, width * 4)
+      ctx.fillStyle = "#000000"
+      ctx.rotate(-pos)
     }
 
     function drawGachaResult() {
-      if (gachaResult.length == 0) return;
+      if (gachaResult.length == 0) return
 
       for (i in gachaResult) {
         angle = gachaResultSecond[i]
-        ang = angle * Math.PI / 30;
-        ctx.rotate(ang);
-        ctx.translate(0, -(radius + 120) * 0.85);
-        ctx.rotate(-ang);
-        ctx.font = "24px verdana, sans-serif";
+        ang = angle * Math.PI / 30
+        ctx.rotate(ang)
+        ctx.translate(0, -(radius + 120) * 0.85)
+        ctx.rotate(-ang)
+        ctx.font = "24px verdana, sans-serif"
         if (gachaResult[i].color == "gold") {
-          ctx.fillStyle = "gold";
+          ctx.fillStyle = "gold"
         }
         else if (gachaResult[i].color == "colorful") {
           gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, 0); // x y r1 x y r0
-          gradient.addColorStop(0, 'green');
-          gradient.addColorStop(0.3, 'yellow');
-          gradient.addColorStop(0.6, 'red');
-          gradient.addColorStop(1, 'purple');
-          ctx.fillStyle = "red";
+          gradient.addColorStop(0, 'green')
+          gradient.addColorStop(0.3, 'yellow')
+          gradient.addColorStop(0.6, 'red')
+          gradient.addColorStop(1, 'purple')
+          ctx.fillStyle = "red"
         }
-        ctx.fillText(gachaResult[i].name, 0, 0);
-        ctx.fillStyle = "#000000";
-        ctx.rotate(ang);
-        ctx.translate(0, (radius + 120) * 0.85);
-        ctx.rotate(-ang);
+        ctx.fillText(gachaResult[i].name, 0, 0)
+        ctx.fillStyle = "#000000"
+        ctx.rotate(ang)
+        ctx.translate(0, (radius + 120) * 0.85)
+        ctx.rotate(-ang)
       }
     }
 
@@ -314,54 +323,56 @@
     ///////////////////////////////////////////////////////
     ///  DRAW SIN & COS
     ///////////////////////////////////////////////////////
-    setInterval(drawGraph, 10)
-    var gap = 20;
+    setInterval(drawGraph, REFRESH_RATE)
+    var gap = 20
     var startUnixTime = -1
     function drawGraph() {
 
       function drawGrid() {
-        ctx3.beginPath();
-        ctx3.lineWidth = 1;
+        ctx3.clearRect(0, 0, canvas3.width, canvas3.height);
+
+        ctx3.beginPath()
+        ctx3.lineWidth = 1
         /////////// Grid ///////
         for (var ver = 0; ver <= canvas3.width; ver += gap) {
           ctx3.moveTo(ver, 0)
-          ctx3.lineTo(ver, canvas3.height);
+          ctx3.lineTo(ver, canvas3.height)
         }
         // for (var ver = 0; ver <= canvas3.height; ver += gap) {
         //   ctx3.moveTo(0, ver)
-        //   ctx3.lineTo(canvas3.width, ver);
+        //   ctx3.lineTo(canvas3.width, ver)
         // }
-        ctx3.strokeStyle = '#e3f2fd';
-        ctx3.stroke();
+        ctx3.strokeStyle = '#e3f2fd'
+        ctx3.stroke()
       }
       drawGrid()
       ////////// Grid end ////////
 
       /////// Axis //////
       function drawAxis() {
-        ctx3.beginPath();
-        ctx3.lineWidth = 1;
-        // ctx3.shadowColor = '#ffffff';
+        ctx3.beginPath()
+        ctx3.lineWidth = 1
+        // ctx3.shadowColor = '#ffffff'
         ctx3.strokeStyle = "#004ba0"
-        // ctx3.strokeStyle = '#0060c0';
-        ctx3.moveTo(0, canvas3.height / 2);
+        // ctx3.strokeStyle = '#0060c0'
+        ctx3.moveTo(0, canvas3.height / 2)
         ctx3.lineTo(canvas3.width, canvas3.height / 2); // X Axis
-        ctx3.moveTo(0, 2);
+        ctx3.moveTo(0, 2)
         ctx3.lineTo(0, canvas3.height);  //  Y Axis
-        ctx3.stroke();
+        ctx3.stroke()
       }
       drawAxis()
       ////////Axis end///
 
       function drawFN() {
-        ctx3.beginPath();
+        ctx3.beginPath()
         for (var angle = 0; angle < canvas3.width - 5; angle += 5) {
           var y = canvas3.height / 2 - 140 * (Math.sin((Math.PI / 180) * angle))
-          var x = 10 + angle;
-          ctx3.lineTo(x, y);
+          var x = 10 + angle
+          ctx3.lineTo(x, y)
         }
-        ctx3.strokeStyle = '#f00000';
-        ctx3.stroke();
+        ctx3.strokeStyle = '#f00000'
+        ctx3.stroke()
       }
 
 
@@ -389,36 +400,129 @@
       }
       drawNextGacha()
 
+      gacha_result_points = []
       function drawGachaResultXY() {
         for (i in gachaResult) {
           y = canvas3.height / 2 - canvas3.height * 0.6 * gachaResult[i].y /2
           x = Math.floor(gachaResultUnixTime[i] - startUnixTime) * gap
+          gacha_result_points.push([x, y])
           ctx3.beginPath()
           // ctx3.translate(x,canvas3.height * y)
-          ctx3.font = "24px verdana, sans-serif";
+          ctx3.font = "24px verdana, sans-serif"
           if (gachaResult[i].color == "gold") {
-            ctx3.fillStyle = "gold";
+            ctx3.fillStyle = "gold"
           }
           else if (gachaResult[i].color == "colorful") {
             gradient = ctx3.createRadialGradient(0, 0, 0, 0, 0, 0); // x y r1 x y r0
-            gradient.addColorStop(0, 'green');
-            gradient.addColorStop(0.3, 'yellow');
-            gradient.addColorStop(0.6, 'red');
-            gradient.addColorStop(1, 'purple');
-            ctx3.fillStyle = "red";
+            gradient.addColorStop(0, 'green')
+            gradient.addColorStop(0.3, 'yellow')
+            gradient.addColorStop(0.6, 'red')
+            gradient.addColorStop(1, 'purple')
+            ctx3.fillStyle = "red"
           }
-          ctx3.fillText(gachaResult[i].name, x + 10, y + 10);
-          ctx3.fillRect(x - 5, y - 5,10,10);
-          ctx3.fillStyle = "#000000";
+          ctx3.fillText(gachaResult[i].name, x + 10, y + 10)
+          ctx3.fillRect(x - 5, y - 5,10,10)
+          ctx3.fillStyle = "#000000"
           // ctx3.translate(-x, -y)
 
         }
       }
       drawGachaResultXY()
 
+      map_period_point = {}
+      SIN_GRAPH_SCALE = 1.1
+      function calSin(period, x_bias) {
+        var counter = 0
+        var increase =  90/180*Math.PI / period
+        map_period_point[String(period)+','+String(x_bias)] = []
+        for(i=0; i<=7200; i+=10){
+            x = i + x_bias
+            y =  250 - Math.sin(counter) * 150
+            counter += increase
+            
+            map_period_point[String(period)+','+String(x_bias)].push([x, y])
+            // console.log( " x : " + x + " y : " + y + " increase : " + counter ) 
+        }
+
+        my_fitness = calSinFitPoints(map_period_point[String(period)+','+String(x_bias)], gacha_result_points)
+        return my_fitness
+      }
+
+      function calSinFitPoints(sin_points, target_points) {
+        fitness = 0
+        for (j = 0; j < target_points.length; j += 1){
+          min_distance = 10000000
+          for (i = 0; i < sin_points.length; i += 1) {
+            distance = Math.pow(Math.pow(sin_points[i][0]-target_points[j][0], 2) + Math.pow(sin_points[i][1]-target_points[j][1], 2), 0.5)
+            if (distance < min_distance) {
+              min_distance = distance
+            }
+          }
+          fitness -= min_distance
+        }
+        return fitness
+      }
+
+      map_period_point = {}
+      function drawSin(period, x_bias){
+        var counter = 0, x = x_bias, y = 0
+        var increase = 90/180*Math.PI / period
+        for(i=0; i<=7200; i+=10){
+            ctx3.moveTo(x,y)
+            x = i + x_bias
+            y =  250 - Math.sin(counter) * 150
+            counter += increase
+            
+            ctx3.lineTo(x,y)
+            ctx3.stroke()
+        }
+      }
+
+      best_fitness = -100000000
+      best_period = null
+      best_x_bias = null
+
+      second_fitness = -100000000
+      second_period = null
+      second_x_bias = null
+      fitness_map = {}
+      for (period = 4; period < 35; period += 0.5){
+        for (x_bias = -180; x_bias < 180; x_bias += 10) {
+          fitness = calSin(period, x_bias)
+          // console.log(period, x_bias, fitness)
+          fitness_map[String(period)+','+String(x_bias)] = fitness
+
+          if (fitness > best_fitness) {
+            best_fitness = fitness
+            best_period = period
+            best_x_bias = x_bias
+          }
+        }
+      }
+
+      // for (period = 8; period < 16; period += 0.5){
+      //   for (x_bias = -180; x_bias < 180; x_bias += 10) {
+      //     fitness = calSin(period, x_bias)
+      //     // console.log(period, x_bias, fitness)
+      //     fitness_map[String(period)+','+String(x_bias)] = fitness
+
+      //     if (fitness > second_fitness) {
+      //       second_fitness = fitness
+      //       second_period = period
+      //       second_x_bias = x_bias
+      //     }
+      //   }
+      // }
+      
+      // console.log(fitness_map)
+      // console.log(map_period_point)
+      // console.log(best_fitness, best_period, best_x_bias)
+      drawSin(best_period, best_x_bias)
+      // drawSin(second_period, second_x_bias)
+      $("#period1")[0].innerHTML = best_period * 2
+      // $("#period2")[0].innerHTML = second_period * 2
+
     }
-
-
 
   </script>
 
